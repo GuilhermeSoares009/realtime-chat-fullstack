@@ -23,7 +23,7 @@ const Form = ({ type }) => {
 
   const onSubmit = async (data) => {
     if (type === "register") {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
