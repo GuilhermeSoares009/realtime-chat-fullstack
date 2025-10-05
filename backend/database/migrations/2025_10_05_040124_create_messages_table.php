@@ -19,7 +19,7 @@ return new class extends Migration
             
             $table->index(['chat_id', 'created_at']);
             $table->index(['user_id', 'created_at']);
-            $table->fullText('content');
+            //$table->fullText('content');
         });
     }
 

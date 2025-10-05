@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('type')->default('direct'); // direct, group (future)
             $table->string('name')->nullable(); // for groups in the future
-            $table->foreignId('last_message_id')->nullable()->constrained('messages')->nullOnDelete();
+            $table->unsignedBigInteger('last_message_id')->nullable();
+            //$table->foreignId('last_message_id')->nullable()->constrained('messages')->nullOnDelete();
             $table->timestamps();
             
             $table->index('type');
