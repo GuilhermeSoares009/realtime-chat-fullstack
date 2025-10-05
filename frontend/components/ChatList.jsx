@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ChatBox from "./ChatBox";
 import Loader from "./Loader";
 import { pusherClient } from "@lib/pusher";
@@ -22,7 +22,10 @@ const ChatList = ({ currentChatId }) => {
           : `/api/users/${currentUser._id}`
       );
       const data = await res.json();
-      setChats(data);
+      
+      const individualChats = data.filter((chat) => chat.members?.length === 2);
+      
+      setChats(individualChats);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -52,8 +55,10 @@ const ChatList = ({ currentChatId }) => {
       };
 
       const handleNewChat = (newChat) => {
-        setChats((allChats) => [...allChats, newChat]);
-      }
+        if (newChat.members?.length === 2) {
+          setChats((allChats) => [...allChats, newChat]);
+        }
+      };
 
       pusherClient.bind("update-chat", handleChatUpdate);
       pusherClient.bind("new-chat", handleNewChat);
@@ -84,6 +89,7 @@ const ChatList = ({ currentChatId }) => {
             index={index}
             currentUser={currentUser}
             currentChatId={currentChatId}
+            key={chat._id}
           />
         ))}
       </div>
