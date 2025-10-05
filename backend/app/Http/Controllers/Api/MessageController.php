@@ -6,6 +6,7 @@ use App\Events\MessageRead;
 use App\Events\MessageSent;
 use App\Events\UserTyping;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessMessageNotification;
 use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -58,6 +59,8 @@ class MessageController extends Controller
         $message->load('user:id,name,avatar');
 
         broadcast(new MessageSent($message))->toOthers();
+
+        ProcessMessageNotification::dispatch($message);
 
         return response()->json([
             'message' => $message,
