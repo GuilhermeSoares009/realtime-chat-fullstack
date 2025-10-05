@@ -23,8 +23,7 @@ class Chat extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)
-            ->withPivot('joined_at', 'last_read_at')
-            ->withTimestamps();
+            ->withPivot('joined_at', 'last_read_at');
     }
 
     public function messages()

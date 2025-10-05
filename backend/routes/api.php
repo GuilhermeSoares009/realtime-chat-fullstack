@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [ChatController::class, 'show']);
         Route::delete('/{id}', [ChatController::class, 'destroy']);
         Route::post('/{id}/read', [ChatController::class, 'markAsRead']);
+        Route::post('/{chatId}/typing', [MessageController::class, 'typing']);
         
         Route::prefix('/{chatId}/messages')->group(function () {
             Route::get('/', [MessageController::class, 'index']);

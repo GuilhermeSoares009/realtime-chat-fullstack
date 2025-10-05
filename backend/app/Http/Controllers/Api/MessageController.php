@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\MessageRead;
+use App\Events\MessageSent;
+use App\Events\UserTyping;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\Message;
@@ -14,7 +17,7 @@ class MessageController extends Controller
     public function index(Request $request, $chatId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
-        
+
         $perPage = $request->input('per_page', 50);
         $search = $request->input('search');
 
@@ -25,7 +28,7 @@ class MessageController extends Controller
         }
 
         $messages = $query->orderBy('created_at', 'desc')
-                         ->paginate($perPage);
+            ->paginate($perPage);
 
         return response()->json($messages);
     }
@@ -54,6 +57,8 @@ class MessageController extends Controller
 
         $message->load('user:id,name,avatar');
 
+        broadcast(new MessageSent($message))->toOthers();
+
         return response()->json([
             'message' => $message,
         ], 201);
@@ -62,7 +67,7 @@ class MessageController extends Controller
     public function update(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
-        
+
         $message = $chat->messages()
             ->where('id', $messageId)
             ->where('user_id', $request->user()->id)
@@ -82,7 +87,7 @@ class MessageController extends Controller
     public function destroy(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
-        
+
         $message = $chat->messages()
             ->where('id', $messageId)
             ->where('user_id', $request->user()->id)
@@ -98,13 +103,15 @@ class MessageController extends Controller
     public function markAsRead(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
-        
+
         $message = $chat->messages()
             ->where('id', $messageId)
             ->where('user_id', '!=', $request->user()->id)
             ->firstOrFail();
 
         $message->markAsRead();
+
+        broadcast(new MessageRead($message, $request->user()->id))->toOthers();
 
         return response()->json([
             'message' => 'Message marked as read',
@@ -125,5 +132,23 @@ class MessageController extends Controller
             ->paginate($perPage);
 
         return response()->json($messages);
+    }
+
+    public function typing(Request $request, $chatId)
+    {
+        $chat = $request->user()->chats()->findOrFail($chatId);
+
+        $validated = $request->validate([
+            'is_typing' => 'required|boolean',
+        ]);
+
+        broadcast(new UserTyping(
+            $chat->id,
+            $request->user()->id,
+            $request->user()->name,
+            $validated['is_typing']
+        ))->toOthers();
+
+        return response()->json(['message' => 'Typing status sent']);
     }
 }

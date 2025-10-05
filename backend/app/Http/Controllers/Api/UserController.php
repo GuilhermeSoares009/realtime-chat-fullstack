@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\UserOnlineStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -90,6 +91,8 @@ class UserController extends Controller
         ]);
 
         $request->user()->updateOnlineStatus($validated['is_online']);
+
+        broadcast(new UserOnlineStatusChanged($request->user()));
 
         return response()->json([
             'message' => 'Status updated',
