@@ -11,6 +11,15 @@ const Profile = () => {
   const user = session?.user;
 
   const [loading, setLoading] = useState(true);
+  
+  const {
+    register,
+    watch,
+    setValue,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     if (user) {
@@ -21,14 +30,7 @@ const Profile = () => {
     setLoading(false);
   }, [user]);
 
-  const {
-    register,
-    watch,
-    setValue,
-    reset,
-    handleSubmit,
-    formState: { error },
-  } = useForm();
+
 
   const updateUser = async (data) => {
     setLoading(true);
@@ -43,8 +45,8 @@ const Profile = () => {
 
       setLoading(false);
       window.location.reload();
-    } catch (error) {
-      console.log(error);
+    } catch (errors) {
+      console.log(errors);
     }
   };
 
