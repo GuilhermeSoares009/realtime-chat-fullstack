@@ -3,14 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Loader from "./Loader";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import MessageBox from "./MessageBox";
 import { pusherClient } from "@lib/pusher";
 
 const ChatDetails = ({ chatId }) => {
   const [loading, setLoading] = useState(true);
   const [chat, setChat] = useState({});
-  const [otherMembers, setOtherMembers] = useState([]);
+  const [otherMember, setOtherMember] = useState(null);
 
   const { data: session } = useSession();
   const currentUser = session?.user;
@@ -26,10 +25,13 @@ const ChatDetails = ({ chatId }) => {
         },
       });
       const data = await res.json();
-      setChat(data);
-      setOtherMembers(
-        data?.members?.filter((member) => member._id !== currentUser._id)
-      );
+      
+      if (data?.members?.length === 2) {
+        setChat(data);
+        const other = data.members.find((member) => member._id !== currentUser._id);
+        setOtherMember(other);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -96,32 +98,15 @@ const ChatDetails = ({ chatId }) => {
     <div className="pb-20">
       <div className="chat-details">
         <div className="chat-header">
-          {chat?.isGroup ? (
-            <>
-              <Link href={`/chats/${chatId}/group-info`}>
-                <img
-                  src={chat?.groupPhoto || "/assets/group.png"}
-                  alt="group-photo"
-                  className="profilePhoto"
-                />
-              </Link>
-
-              <div className="text">
-                <p>
-                  {chat?.name} &#160; &#183; &#160; {chat?.members?.length}{" "}
-                  members
-                </p>
-              </div>
-            </>
-          ) : (
+          {otherMember && (
             <>
               <img
-                src={otherMembers[0].profileImage || "/assets/person.jpg"}
+                src="https://api.dicebear.com/9.x/adventurer/svg?seed=Aidan"
                 alt="profile photo"
                 className="profilePhoto"
               />
               <div className="text">
-                <p>{otherMembers[0].username}</p>
+                <p>{otherMember.username}</p>
               </div>
             </>
           )}

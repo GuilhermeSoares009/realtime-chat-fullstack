@@ -1,82 +1,140 @@
-import { format } from "date-fns";
-import { useRouter } from "next/navigation";
+"use client";
 
-const ChatBox = ({ chat, currentUser, currentChatId }) => {
-  const otherMembers = chat?.members?.filter(
-    (member) => member._id !== currentUser._id
-  );
+import { useState, useEffect, useRef } from "react";
+import Loader from "./Loader";
+import { useSession } from "next-auth/react";
+import MessageBox from "./MessageBox";
+import { pusherClient } from "@lib/pusher";
 
-  const lastMessage =
-    chat?.messages?.length > 0 && chat?.messages[chat?.messages.length - 1];
+const ChatDetails = ({ chatId }) => {
+  const [loading, setLoading] = useState(true);
+  const [chat, setChat] = useState({});
+  const [otherMembers, setOtherMembers] = useState([]);
 
-  const seen = lastMessage?.seenBy?.find(
-    (member) => member._id === currentUser._id
-  );
+  const { data: session } = useSession();
+  const currentUser = session?.user;
 
-  const router = useRouter();
+  const [text, setText] = useState("");
 
-  return (
-    <div
-      className={`chat-box ${chat._id === currentChatId ? "bg-blue-2" : ""}`}
-      onClick={() => router.push(`/chats/${chat._id}`)}
-    >
-      <div className="chat-info">
-        {chat?.isGroup ? (
+  const getChatDetails = async () => {
+    try {
+      const res = await fetch(`/api/chats/${chatId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setChat(data);
+      setOtherMembers(
+        data?.members?.filter((member) => member._id !== currentUser._id)
+      );
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser && chatId) getChatDetails();
+  }, [currentUser, chatId]);
+
+  const sendText = async () => {
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chatId,
+          currentUserId: currentUser._id,
+          text,
+        }),
+      });
+
+      if (res.ok) {
+        setText("");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    pusherClient.subscribe(chatId);
+
+    const handleMessage = async (newMessage) => {
+      setChat((prevChat) => {
+        return {
+          ...prevChat,
+          messages: [...prevChat.messages, newMessage],
+        };
+      });
+    };
+
+    pusherClient.bind("new-message", handleMessage);
+
+    return () => {
+      pusherClient.unsubscribe(chatId);
+      pusherClient.unbind("new-message", handleMessage);
+    };
+  }, [chatId]);
+
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [chat?.messages]);
+
+  return loading ? (
+    <Loader />
+  ) : (
+    <div className="pb-20">
+      <div className="chat-details">
+        <div className="chat-header">
           <img
-            src={chat?.groupPhoto || "/assets/group.png"}
-            alt="group-photo"
+            src="https://api.dicebear.com/9.x/adventurer/svg?seed=Vivian"
+            alt="profile photo"
             className="profilePhoto"
           />
-        ) : (
-          <img
-            src={otherMembers[0].profileImage || "/assets/person.jpg"}
-            alt="profile-photo"
-            className="profilePhoto"
-          />
-        )}
-
-        <div className="flex flex-col gap-1">
-          {chat?.isGroup ? (
-            <p className="text-base-bold">{chat?.name}</p>
-          ) : (
-            <p className="text-base-bold">{otherMembers[0]?.username}</p>
-          )}
-
-          {!lastMessage && <p className="text-small-bold">Started a chat</p>}
-
-          {lastMessage?.photo ? (
-            lastMessage?.sender?._id === currentUser._id ? (
-              <p className="text-small-medium text-grey-3">You sent a photo</p>
-            ) : (
-              <p
-                className={`${
-                  seen ? "text-small-medium text-grey-3" : "text-small-bold"
-                }`}
-              >
-                Received a photo
-              </p>
-            )
-          ) : (
-            <p
-              className={`last-message ${
-                seen ? "text-small-medium text-grey-3" : "text-small-bold"
-              }`}
-            >
-              {lastMessage?.text}
-            </p>
-          )}
+          <div className="text">
+            <p>{otherMembers[0].username}</p>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="text-base-light text-grey-3">
-          {!lastMessage
-            ? format(new Date(chat?.createdAt), "p")
-            : format(new Date(chat?.lastMessageAt), "p")}
-        </p>
+        <div className="chat-body">
+          {chat?.messages?.map((message, index) => (
+            <MessageBox
+              key={index}
+              message={message}
+              currentUser={currentUser}
+            />
+          ))}
+          <div ref={bottomRef} />
+        </div>
+
+        <div className="send-message">
+          <div className="prepare-message">
+            <input
+              type="text"
+              placeholder="Write a message..."
+              className="input-field"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              required
+            />
+          </div>
+
+          <div onClick={sendText}>
+            <img src="/assets/send.jpg" alt="send" className="send-icon" />
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ChatBox;
+export default ChatDetails;
