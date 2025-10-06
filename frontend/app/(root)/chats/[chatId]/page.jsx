@@ -2,7 +2,7 @@
 
 import ChatDetails from "@components/ChatDetails"
 import ChatList from "@components/ChatList"
-import { useSession } from "next-auth/react"
+import { useAuth } from '@/contexts/AuthContext';
 import { useParams } from "next/navigation"
 import { useEffect } from "react"
 
@@ -10,8 +10,7 @@ import { useEffect } from "react"
 const ChatPage = () => {
   const { chatId } = useParams()
 
-  const { data: session } = useSession()
-  const currentUser = session?.user
+  const { user: currentUser } = useAuth();
 
   const seenMessages = async () => {
     try {
@@ -21,7 +20,7 @@ const ChatPage = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          currentUserId: currentUser._id
+          currentUserId: currentUser.id
         })
       })
     } catch (err) {

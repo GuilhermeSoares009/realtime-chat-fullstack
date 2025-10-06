@@ -9,7 +9,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { signIn } from "next-auth/react"
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 const Form = ({ type }) => {
   const {
@@ -21,37 +22,33 @@ const Form = ({ type }) => {
 
   const router = useRouter();
 
+  const { login, register: registerUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async (data) => {
     if (type === "register") {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        router.push("/");
-      }
-
-      if (res.error) {
-        toast.error("Something went wrong");
+      setLoading(true);
+      try {
+        await registerUser(data.username, data.email, data.password, data.password);
+        toast.success("Account created!");
+        router.push("/chats");
+      } catch (error) {
+        toast.error(error.message || "Registration failed");
+      } finally {
+        setLoading(false);
       }
     }
 
     if (type === "login") {
-      const res = await signIn("credentials", {
-        ...data,
-        redirect: false,
-      })
-
-      if (res.ok) {
+      setLoading(true);
+      try {
+        await login(data.email, data.password);
+        toast.success("Welcome back!");
         router.push("/chats");
-      }
-
-      if (res.error) {
-        toast.error("Invalid email or password");
+      } catch (error) {
+        toast.error(error.message || "Login failed");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -131,8 +128,8 @@ const Form = ({ type }) => {
             )}
           </div>
 
-          <button className="button" type="submit">
-            {type === "register" ? "Join Free" : "Let's Chat"}
+          <button className="button" type="submit" disabled={loading}>
+            {loading ? "Loading..." : (type === "register" ? "Join Free" : "Let's Chat")}
           </button>
         </form>
 

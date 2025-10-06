@@ -1,14 +1,14 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/AuthContext';
+import { apiClient } from '@/lib/api-client';
+import { getEcho } from '@/lib/pusher';
 import { useEffect, useState } from "react";
 import ChatBox from "./ChatBox";
 import Loader from "./Loader";
-import { pusherClient } from "@lib/pusher";
 
 const ChatList = ({ currentChatId }) => {
-  const { data: sessions } = useSession();
-  const currentUser = sessions?.user;
+  const { user: currentUser } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [chats, setChats] = useState([]);
@@ -16,16 +16,17 @@ const ChatList = ({ currentChatId }) => {
 
   const getChats = async () => {
     try {
-      const res = await fetch(
-        search !== ""
-          ? `/api/users/${currentUser._id}/searchChat/${search}`
-          : `/api/users/${currentUser._id}`
-      );
-      const data = await res.json();
-      
-      const individualChats = data.filter((chat) => chat.members?.length === 2);
-      
-      setChats(individualChats);
+      const data = await apiClient.getChats();
+      // normalize ids
+      const normalized = (data || []).map(c => ({
+        id: c.id ?? c._id,
+        name: c.name,
+        users: c.users ?? c.members,
+        last_message: c.last_message ?? c.messages?.[c.messages.length - 1],
+        unread_count: c.unread_count ?? 0,
+        ...c,
+      }));
+      setChats(normalized);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -36,40 +37,51 @@ const ChatList = ({ currentChatId }) => {
     if (currentUser) {
       getChats();
     }
-  }, [currentUser, search]);
+  }, [currentUser]);
+
+  // client-side filtering
+  useEffect(() => {
+    if (search === "") {
+      // reload chats
+      getChats();
+      return;
+    }
+    const filtered = chats.filter(chat => {
+      const otherUser = (chat.users || []).find(u => u.id !== currentUser.id);
+      return otherUser?.name?.toLowerCase().includes(search.toLowerCase()) || otherUser?.username?.toLowerCase().includes(search.toLowerCase());
+    });
+    setChats(filtered);
+  }, [search]);
 
   useEffect(() => {
-    if (currentUser) {
-      pusherClient.subscribe(currentUser._id);
+    const echo = getEcho();
+    if (!currentUser || !echo) return;
 
-      const handleChatUpdate = (updatedChat) => {
-        setChats((allChats) =>
-          allChats.map((chat) => {
-            if (chat._id === updatedChat.id) {
-              return { ...chat, messages: updatedChat.messages };
-            } else {
-              return chat;
-            }
-          })
-        );
-      };
+    // listen for new chats for this user
+    echo.private(`user.${currentUser.id}`)
+      .listen('.chat.created', (data) => {
+        setChats((prev) => [data.chat, ...prev]);
+      });
 
-      const handleNewChat = (newChat) => {
-        if (newChat.members?.length === 2) {
-          setChats((allChats) => [...allChats, newChat]);
-        }
-      };
+    // listen for messages on each chat
+    const subscribeChats = () => {
+      chats.forEach(chat => {
+        echo.private(`chat.${chat.id}`)
+          .listen('.message.sent', (data) => {
+            setChats((prev) => prev.map(c => c.id === chat.id ? { ...c, last_message: data.message, unread_count: (c.unread_count || 0) + 1 } : c));
+          });
+      });
+    };
 
-      pusherClient.bind("update-chat", handleChatUpdate);
-      pusherClient.bind("new-chat", handleNewChat);
+    subscribeChats();
 
-      return () => {
-        pusherClient.unsubscribe(currentUser._id);
-        pusherClient.unbind("update-chat", handleChatUpdate);
-        pusherClient.unbind("new-chat", handleNewChat);
-      };
-    }
-  }, [currentUser]);
+    return () => {
+      try {
+        echo.leave(`user.${currentUser.id}`);
+        chats.forEach(chat => echo.leave(`chat.${chat.id}`));
+      } catch (e) {}
+    };
+  }, [currentUser, chats]);
 
   return loading ? (
     <Loader />
@@ -89,7 +101,7 @@ const ChatList = ({ currentChatId }) => {
             index={index}
             currentUser={currentUser}
             currentChatId={currentChatId}
-            key={chat._id}
+            key={chat.id || index}
           />
         ))}
       </div>

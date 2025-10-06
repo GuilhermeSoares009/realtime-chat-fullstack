@@ -1,6 +1,8 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/AuthContext';
+import { apiClient } from '@/lib/api-client';
+import toast from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { CheckCircle, RadioButtonUnchecked } from "@mui/icons-material";
@@ -11,16 +13,18 @@ const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [search, setSearch] = useState("");
 
-  const { data: session } = useSession();
-  const currentUser = session?.user;
+  const { user: currentUser } = useAuth();
 
   const getContacts = async () => {
     try {
-      const res = await fetch(
-        search !== "" ? `/api/users/searchContact/${search}` : "/api/users"
-      );
-      const data = await res.json();
-      setContacts(data.filter((contact) => contact._id !== currentUser._id));
+      const data = search === "" ? await apiClient.getUsers() : await apiClient.searchUsers(search);
+      // normalize ids to `id` and filter out current user
+      const normalized = (data || []).map(u => ({
+        id: u.id ?? u._id,
+        username: u.username ?? u.name,
+        profileImage: u.profileImage ?? u.avatar,
+      })).filter(contact => contact.id !== currentUser.id);
+      setContacts(normalized);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -41,20 +45,23 @@ const Contacts = () => {
   const router = useRouter();
 
   /* CREATE CHAT */
-  const createChat = async () => {
-    const res = await fetch("/api/chats", {
-      method: "POST",
-      body: JSON.stringify({
-        currentUserId: currentUser._id,
-        members: [selectedContact._id],
-        isGroup: false,
-        name: "",
-      }),
-    });
-    const chat = await res.json();
+  const [loadingCreate, setLoadingCreate] = useState(false);
 
-    if (res.ok) {
-      router.push(`/chats/${chat._id}`);
+  const createChat = async () => {
+    if (!selectedContact) {
+      toast.error("Please select a contact");
+      return;
+    }
+    setLoadingCreate(true);
+    try {
+      const chat = await apiClient.createDirectChat(selectedContact.id);
+      setSelectedContact(null);
+      setSearch("");
+      router.push(`/chats/${chat.id ?? chat._id}`);
+    } catch (error) {
+      toast.error("Failed to create chat");
+    } finally {
+      setLoadingCreate(false);
     }
   };
 
@@ -76,11 +83,11 @@ const Contacts = () => {
           <div className="flex flex-col flex-1 gap-5 overflow-y-scroll custom-scrollbar">
             {contacts.map((user, index) => (
               <div
-                key={index}
-                className="contact"
+                key={user.id || index}
+                className={`contact ${selectedContact?.id === user.id ? 'bg-purple-1 rounded-lg' : ''}`}
                 onClick={() => handleSelect(user)}
               >
-                {selectedContact === user ? (
+                {selectedContact?.id === user.id ? (
                   <CheckCircle sx={{ color: "red" }} />
                 ) : (
                   <RadioButtonUnchecked />
@@ -100,9 +107,9 @@ const Contacts = () => {
           <button
             className="btn"
             onClick={createChat}
-            disabled={!selectedContact}
+            disabled={!selectedContact || loadingCreate}
           >
-            START CHAT
+            {loadingCreate ? 'Creating...' : 'START CHAT'}
           </button>
         </div>
       </div>

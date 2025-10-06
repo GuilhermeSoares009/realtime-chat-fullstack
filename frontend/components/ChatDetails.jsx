@@ -2,36 +2,32 @@
 
 import { useState, useEffect, useRef } from "react";
 import Loader from "./Loader";
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/AuthContext';
 import MessageBox from "./MessageBox";
-import { pusherClient } from "@lib/pusher";
+import { apiClient } from '@/lib/api-client';
+import { getEcho } from '@/lib/pusher';
 
 const ChatDetails = ({ chatId }) => {
   const [loading, setLoading] = useState(true);
   const [chat, setChat] = useState({});
   const [otherMember, setOtherMember] = useState(null);
 
-  const { data: session } = useSession();
-  const currentUser = session?.user;
+  const { user: currentUser } = useAuth();
 
   const [text, setText] = useState("");
 
   const getChatDetails = async () => {
     try {
-      const res = await fetch(`/api/chats/${chatId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const chat = await apiClient.getChat(chatId);
+      const messages = await apiClient.getMessages(chatId);
+      setChat(chat);
+      const other = (chat.users || chat.members || []).find(m => (m.id ?? m._id) !== currentUser.id);
+      setOtherMember({
+        id: other?.id ?? other?._id,
+        username: other?.username ?? other?.name,
+        profileImage: other?.profileImage ?? other?.avatar,
       });
-      const data = await res.json();
-      
-      if (data?.members?.length === 2) {
-        setChat(data);
-        const other = data.members.find((member) => member._id !== currentUser._id);
-        setOtherMember(other);
-      }
-      
+      setMessages(messages.reverse ? messages.reverse() : messages);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -42,49 +38,56 @@ const ChatDetails = ({ chatId }) => {
     if (currentUser && chatId) getChatDetails();
   }, [currentUser, chatId]);
 
-  const sendText = async () => {
-    try {
-      const res = await fetch("/api/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chatId,
-          currentUserId: currentUser._id,
-          text,
-        }),
-      });
+  const [messages, setMessages] = useState([]);
+  const [sending, setSending] = useState(false);
 
-      if (res.ok) {
-        setText("");
-      }
+  const sendText = async () => {
+    if (!text.trim()) return;
+    setSending(true);
+    try {
+      const message = await apiClient.sendMessage(chatId, text.trim());
+      setMessages(prev => [...prev, message]);
+      setText("");
     } catch (err) {
       console.log(err);
+    } finally {
+      setSending(false);
     }
   };
 
   useEffect(() => {
-    pusherClient.subscribe(chatId);
+    const echo = getEcho();
+    if (!echo) return;
 
-    const handleMessage = async (newMessage) => {
-      setChat((prevChat) => {
-        return {
-          ...prevChat,
-          messages: [...prevChat.messages, newMessage],
-        };
+    echo.private(`chat.${chatId}`)
+      .listen('.message.sent', (data) => {
+        if (data.message && data.message.sender_id !== currentUser.id) {
+          setMessages(prev => [...prev, data.message]);
+        }
+      })
+      .listen('.user.typing', (data) => {
+        if (data.user_id !== currentUser.id) {
+          setTypingUser(data.is_typing ? data.user_name : null);
+        }
       });
-    };
-
-    pusherClient.bind("new-message", handleMessage);
 
     return () => {
-      pusherClient.unsubscribe(chatId);
-      pusherClient.unbind("new-message", handleMessage);
+      try { echo.leave(`chat.${chatId}`); } catch(e){}
     };
-  }, [chatId]);
+  }, [chatId, currentUser]);
 
   const bottomRef = useRef(null);
+  const [typingUser, setTypingUser] = useState(null);
+
+  let typingTimeout;
+  const handleTyping = (e) => {
+    setText(e.target.value);
+    apiClient.sendTyping(chatId, true).catch(() => {});
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      apiClient.sendTyping(chatId, false).catch(() => {});
+    }, 1000);
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -113,9 +116,9 @@ const ChatDetails = ({ chatId }) => {
         </div>
 
         <div className="chat-body">
-          {chat?.messages?.map((message, index) => (
+          {messages?.map((message, index) => (
             <MessageBox
-              key={index}
+              key={message.id ?? index}
               message={message}
               currentUser={currentUser}
             />
@@ -130,7 +133,7 @@ const ChatDetails = ({ chatId }) => {
               placeholder="Write a message..."
               className="input-field"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={handleTyping}
               required
             />
           </div>

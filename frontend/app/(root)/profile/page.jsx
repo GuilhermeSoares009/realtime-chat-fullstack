@@ -2,13 +2,14 @@
 
 import Loader from "@components/Loader";
 import { PersonOutline } from "@mui/icons-material";
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/AuthContext';
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { apiClient } from '@/lib/api-client';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { user, updateUser } = useAuth();
 
   const [loading, setLoading] = useState(true);
   
@@ -24,7 +25,8 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       reset({
-        username: user?.username
+        username: user?.username || user?.name,
+        bio: user?.bio || "",
       });
     }
     setLoading(false);
@@ -32,21 +34,16 @@ const Profile = () => {
 
 
 
-  const updateUser = async (data) => {
+  const updateProfile = async (data) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/users/${user._id}/update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
+      const updated = await apiClient.updateUser({ name: data.username, bio: data.bio });
+      updateUser(updated);
+      toast.success("Profile updated!");
+    } catch (error) {
+      toast.error("Failed to update profile");
+    } finally {
       setLoading(false);
-      window.location.reload();
-    } catch (errors) {
-      console.log(errors);
     }
   };
 
@@ -56,7 +53,7 @@ const Profile = () => {
     <div className="profile-page">
       <h1 className="text-heading3-bold">Edit Your Profile</h1>
 
-      <form className="edit-profile" onSubmit={handleSubmit(updateUser)}>
+  <form className="edit-profile" onSubmit={handleSubmit(updateProfile)}>
         <div className="input">
           <input
             {...register("username", {
@@ -73,15 +70,19 @@ const Profile = () => {
           />
           <PersonOutline sx={{ color: "#737373" }} />
         </div>
-        {error?.username && (
-          <p className="text-red-500">{error.username.message}</p>
+        {errors?.username && (
+          <p className="text-red-500">{errors.username.message}</p>
         )}
 
-        <div className="flex items-center justify-between">
-          <img
-            alt="profile"
-            className="w-40 h-40 rounded-full"
-          />
+        <div>
+          <div className="input">
+            <input
+              {...register("bio")}
+              type="text"
+              placeholder="Bio"
+              className="input-field"
+            />
+          </div>
         </div>
 
         <button className="btn" type="submit">

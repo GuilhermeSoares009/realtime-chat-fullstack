@@ -1,7 +1,7 @@
 "use client";
 
 import { Logout } from "@mui/icons-material";
-import { signOut, useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/AuthContext';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -10,11 +10,10 @@ const TopBar = () => {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    signOut({ callbackUrl: "/" });
+    logout();
   };
 
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { user, logout } = useAuth();
 
   return (
     <div className="topbar">
@@ -47,7 +46,7 @@ const TopBar = () => {
 
         <Link href="/profile">
           <img
-            src={user?.profileImage || "/assets/person.jpg"}
+            src={user?.avatar || user?.profileImage || "/assets/person.jpg"}
             alt="profile"
             className="profilePhoto"
           />
