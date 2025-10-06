@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\MessageRead;
 use App\Events\MessageSent;
 use App\Events\UserTyping;
+use App\Helpers\Metrics;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessMessageNotification;
 use App\Models\Chat;
@@ -36,6 +37,8 @@ class MessageController extends Controller
 
     public function store(Request $request, $chatId)
     {
+        $startTime = microtime(true);
+
         $chat = $request->user()->chats()->findOrFail($chatId);
 
         $validated = $request->validate([
@@ -61,6 +64,9 @@ class MessageController extends Controller
         broadcast(new MessageSent($message))->toOthers();
 
         ProcessMessageNotification::dispatch($message);
+
+        Metrics::increment('messages.sent');
+        Metrics::timing('messages.send_duration', (microtime(true) - $startTime) * 1000);
 
         return response()->json([
             'message' => $message,

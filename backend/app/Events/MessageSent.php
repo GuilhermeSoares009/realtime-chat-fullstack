@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class MessageSent implements ShouldBroadcast
 {
@@ -18,6 +19,13 @@ class MessageSent implements ShouldBroadcast
     public function __construct(Message $message)
     {
         $this->message = $message->load('user:id,name,avatar');
+
+        Log::channel('broadcasting')->info('MessageSent event dispatched', [
+            'message_id' => $message->id,
+            'chat_id' => $message->chat_id,
+            'user_id' => $message->user_id,
+        ]);
+
     }
 
     public function broadcastOn(): array

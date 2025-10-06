@@ -127,6 +127,20 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'chat' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/chat.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'broadcasting' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/broadcasting.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
     ],
 
 ];

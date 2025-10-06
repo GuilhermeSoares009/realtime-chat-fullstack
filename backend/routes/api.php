@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', [\App\Http\Controllers\Api\MetricsController::class, 'health']);
+
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -52,4 +54,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/messages/search', [MessageController::class, 'search']);
+
+     Route::get('/metrics', [\App\Http\Controllers\Api\MetricsController::class, 'metrics']);
 });
