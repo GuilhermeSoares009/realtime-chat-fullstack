@@ -55,6 +55,8 @@ return [
     |
     */
 
+    'only_local' => env('TELESCOPE_ONLY_LOCAL', true), 
+
     'driver' => env('TELESCOPE_DRIVER', 'database'),
 
     'storage' => [
