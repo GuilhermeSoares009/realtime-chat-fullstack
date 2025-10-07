@@ -39,10 +39,9 @@ Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Rever
 ### 1. Backend
 
 ```bash
-# Subir todos os serviços (backend, frontend, DB, Redis)
+
 docker-compose up -d
 
-# Entrar no container do backend
 docker-compose exec backend bash
 
 # Rodar migrations
@@ -56,7 +55,6 @@ O backend estará disponível em http://localhost:8000.
 
 ### 2. Frontend
 ```bash
-Copiar código
 cd frontend
 
 npm install
