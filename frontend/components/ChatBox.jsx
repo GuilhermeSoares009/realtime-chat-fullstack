@@ -18,7 +18,7 @@ const ChatBox = ({ chat, currentUser, currentChatId }) => {
     >
       <div className="chat-info">
         <img
-          src={otherMember?.profileImage || `https://api.dicebear.com/9.x/adventurer/svg?seed=${otherMember?.username}`}
+          src={avatarUrl(otherMember, 64)}
           alt="profile-photo"
           className="profilePhoto"
         />

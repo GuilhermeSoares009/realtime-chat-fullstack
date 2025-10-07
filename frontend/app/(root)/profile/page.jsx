@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast';
+import { avatarUrl } from '@/lib/avatar';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -52,7 +53,6 @@ const Profile = () => {
   ) : (
     <div className="profile-page">
       <h1 className="text-heading3-bold">Edit Your Profile</h1>
-
   <form className="edit-profile" onSubmit={handleSubmit(updateProfile)}>
         <div className="input">
           <input

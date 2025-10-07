@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { avatarUrl } from '@/lib/avatar';
 
 const TopBar = () => {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ const TopBar = () => {
   return (
     <div className="topbar">
       <Link href="/chats">
-        <img src="/assets/logo.png" alt="logo" className="logo" />
+        <img src="/assets/logo.svg" alt="logo" className="logo" />
       </Link>
 
       <div className="menu">
@@ -46,7 +47,7 @@ const TopBar = () => {
 
         <Link href="/profile">
           <img
-            src={user?.avatar || user?.profileImage || "/assets/person.jpg"}
+            src={avatarUrl(user, 80)}
             alt="profile"
             className="profilePhoto"
           />

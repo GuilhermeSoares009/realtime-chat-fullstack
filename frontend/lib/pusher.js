@@ -1,8 +1,6 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
-window.Pusher = Pusher;
-
 let echoInstance = null;
 
 export function initEcho(token) {
@@ -10,21 +8,25 @@ export function initEcho(token) {
     return echoInstance;
   }
 
-  echoInstance = new Echo({
-    broadcaster: 'reverb',
-    key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
-    wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
-    wsPort: parseInt(process.env.NEXT_PUBLIC_REVERB_PORT || '8080'),
-    wssPort: parseInt(process.env.NEXT_PUBLIC_REVERB_PORT || '8080'),
-    forceTLS: process.env.NEXT_PUBLIC_REVERB_SCHEME === 'https',
-    enabledTransports: ['ws', 'wss'],
-    authEndpoint: `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}/broadcasting/auth`,
-    auth: {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  if (typeof window !== "undefined") {
+    window.Pusher = Pusher;
+
+    echoInstance = new Echo({
+      broadcaster: 'reverb',
+      key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
+      wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
+      wsPort: parseInt(process.env.NEXT_PUBLIC_REVERB_PORT || '8080'),
+      wssPort: parseInt(process.env.NEXT_PUBLIC_REVERB_PORT || '8080'),
+      forceTLS: process.env.NEXT_PUBLIC_REVERB_SCHEME === 'https',
+      enabledTransports: ['ws', 'wss'],
+      authEndpoint: `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}/broadcasting/auth`,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    },
-  });
+    });
+  }
 
   return echoInstance;
 }

@@ -4,6 +4,7 @@ import { Logout } from "@mui/icons-material";
 import { useAuth } from '@/contexts/AuthContext';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { avatarUrl } from '@/lib/avatar';
 
 const BottomBar = () => {
   const pathname = usePathname();
@@ -40,7 +41,7 @@ const BottomBar = () => {
 
       <Link href="/profile">
         <img
-          src={user?.avatar || user?.profileImage || "/assets/person.jpg"}
+          src={avatarUrl(user, 80)}
           alt="profile"
           className="profilePhoto"
         />

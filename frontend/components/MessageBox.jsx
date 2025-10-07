@@ -1,4 +1,5 @@
 import { format } from "date-fns"
+import { avatarUrl } from '@/lib/avatar';
 
 const MessageBox = ({ message, currentUser }) => {
   const senderId = message?.sender?.id ?? message?.sender?._id ?? message?.sender_id;
@@ -8,7 +9,7 @@ const MessageBox = ({ message, currentUser }) => {
   if (!isMine) {
     return (
       <div className="message-box">
-        <img src={message?.sender?.profileImage || "https://api.dicebear.com/9.x/adventurer/svg?seed=Jack"} alt="profile photo" className="message-profilePhoto" />
+        <img src={avatarUrl(message?.sender, 48)} alt="profile photo" className="message-profilePhoto" />
         <div className="message-info">
           <p className="text-small-bold">
             {message?.sender?.username || message?.sender?.name} &#160; &#183; &#160; {format(new Date(message?.created_at || message?.createdAt || message?.timestamp), "p")}

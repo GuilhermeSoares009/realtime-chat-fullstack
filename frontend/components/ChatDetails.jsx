@@ -104,7 +104,7 @@ const ChatDetails = ({ chatId }) => {
           {otherMember && (
             <>
               <img
-                src="https://api.dicebear.com/9.x/adventurer/svg?seed=Aidan"
+                src={avatarUrl(otherMember, 80)}
                 alt="profile photo"
                 className="profilePhoto"
               />

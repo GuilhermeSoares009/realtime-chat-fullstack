@@ -18,7 +18,7 @@ const Contacts = () => {
   const getContacts = async () => {
     try {
       const data = search === "" ? await apiClient.getUsers() : await apiClient.searchUsers(search);
-      // normalize ids to `id` and filter out current user
+
       const normalized = (data || []).map(u => ({
         id: u.id ?? u._id,
         username: u.username ?? u.name,
@@ -35,7 +35,6 @@ const Contacts = () => {
     if (currentUser) getContacts();
   }, [currentUser, search]);
 
-  /* SELECT CONTACT */
   const [selectedContact, setSelectedContact] = useState(null);
 
   const handleSelect = (contact) => {
@@ -44,7 +43,6 @@ const Contacts = () => {
 
   const router = useRouter();
 
-  /* CREATE CHAT */
   const [loadingCreate, setLoadingCreate] = useState(false);
 
   const createChat = async () => {
@@ -93,7 +91,7 @@ const Contacts = () => {
                   <RadioButtonUnchecked />
                 )}
                 <img
-                  src={user.profileImage || "/assets/person.jpg"}
+                  src={avatarUrl(user, 64)}
                   alt="profile"
                   className="profilePhoto"
                 />
