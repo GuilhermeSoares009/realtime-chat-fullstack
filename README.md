@@ -67,7 +67,7 @@ npm run dev
 Frontend disponível em http://localhost:3000.
 
 #### Features Implementadas
-✅ Autenticação
+✅ Autenticação  
 ✅ Chat      
 ✅ Histórico de mensagens com paginação  
 ✅ Busca de usuários    
