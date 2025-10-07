@@ -140,7 +140,7 @@ const ChatDetails = ({ chatId }) => {
           </div>
 
           <div onClick={sendText}>
-            <img src="/assets/send.jpg" alt="send" className="send-icon" />
+            <img src="/assets/send.svg" alt="send" className="send-icon" />
           </div>
         </div>
       </div>
