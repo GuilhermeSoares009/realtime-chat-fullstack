@@ -67,15 +67,11 @@ npm run dev
 Frontend disponível em http://localhost:3000.
 
 #### Features Implementadas
-✅ Autenticação com Bearer tokens (Sanctum)  
-✅ Chat 1:1 em tempo real  
-✅ Indicador de digitação  
-✅ Status online/offline  
+✅ Autenticação
+✅ Chat      
 ✅ Histórico de mensagens com paginação  
-✅ Busca de usuários  
-✅ Marcação de mensagens lidas  
-✅ Broadcasting com Reverb  
-✅ Logging estruturado  
+✅ Busca de usuários    
+✅ Logging  
 ✅ Testes automatizados  
 ✅ Documentação Swagger  
 
