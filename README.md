@@ -1,6 +1,6 @@
 # Real-time Chat Application
 
-Desafio técnico sobre criação de um Chat em tempo real.
+Desafio técnico full-stack: aplicação de chat em tempo real.
 
 ![Diagrama](application-diagram.svg)
 
