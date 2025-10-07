@@ -4,18 +4,6 @@ Desafio técnico sobre criação de um Chat em tempo real.
 
 ![Diagrama](application-diagram.svg)
 
-## Requisitos
-
-- PHP 8.3+
-- Composer
-- Node.js 18+
-- npm ou yarn
-- PostgreSQL 16+ (ou SQLite para desenvolvimento)
-- Redis
-- Docker
-
----
-
 ## Rodando com Docker
 
 ### 1. Backend
