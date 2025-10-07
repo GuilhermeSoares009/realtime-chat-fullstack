@@ -1,38 +1,87 @@
-# Chat em Tempo Real
+# Real-time Chat Application
 
-Aplicação de mensagens instantâneas desenvolvida como desafio técnico. 
+Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Reverb.
 
-## Stack
+## Stack Tecnológica
 
-**Frontend:**
+### Backend
+- Laravel 11
+- PHP 8.3
+- PostgreSQL (ou SQLite para dev)
+- Laravel Sanctum (autenticação)
+- Laravel Reverb (WebSockets)
+- Redis (cache e queues)
+- Telescope (debugging)
+
+### Frontend
 - Next.js 14
-- React
-- TailwindCSS
-- NextAuth
-- Pusher
+- React 18
+- Tailwind CSS
+- Laravel Echo (realtime)
+- Zustand (state management)
 
-**Backend:**
-- Laravel
-- MySQL
-- Pusher
+---
 
-**Banco de Dados:**
-- MySQL
+## Requisitos
 
-**Serviços de Terceiros:**
-- Pusher (WebSocket/Broadcasting)
+- PHP 8.3+
+- Composer
+- Node.js 18+
+- npm ou yarn
+- PostgreSQL 16+ (ou SQLite para desenvolvimento)
+- Redis
+- Docker
 
-**Deploy:**
-- Frontend: Vercel / Netlify
-- Backend: AWS / DigitalOcean
-- Banco: MySQL (RDS ou similar)
+---
+
+## Rodando com Docker
+
+### 1. Backend
+
+```bash
+# Subir todos os serviços (backend, frontend, DB, Redis)
+docker-compose up -d
+
+# Entrar no container do backend
+docker-compose exec backend bash
+
+# Rodar migrations
+php artisan migrate
+
+# Popular banco com seeders
+php artisan db:seed
+```
+
+O backend estará disponível em http://localhost:8000.
+
+### 2. Frontend
+```bash
+Copiar código
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+Frontend disponível em http://localhost:3000.
+
+#### Features Implementadas
+✅ Autenticação com Bearer tokens (Sanctum)  
+✅ Chat 1:1 em tempo real  
+✅ Indicador de digitação  
+✅ Status online/offline  
+✅ Histórico de mensagens com paginação  
+✅ Busca de usuários  
+✅ Marcação de mensagens lidas  
+✅ Broadcasting com Reverb  
+✅ Logging estruturado  
+✅ Testes automatizados  
+✅ Documentação Swagger  
 
 
-## Funcionalidades
 
-- Autenticação de usuários
-- Busca de contatos
-- Criação de conversas individuais
-- Envio e recebimento de mensagens em tempo real
-- Histórico de conversas
-- Gerenciamento de perfil
+## 3. Documentação da API
+Após iniciar o backend, acesse:  
+Swagger UI: http://localhost:8000/api/documentation  
+Telescope: http://localhost:8000/telescope  
