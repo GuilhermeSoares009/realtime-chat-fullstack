@@ -13,6 +13,25 @@ use Illuminate\Support\Facades\DB;
 class MetricsController extends Controller
 {
 
+    /**
+     * @OA\Get(
+     *     path="/metrics/health",
+     *     summary="Get system health status",
+     *     tags={"Metrics"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="System is healthy",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="ok"),
+     *             @OA\Property(property="timestamp", type="string", format="date-time", example="2023-10-01T12:00:00Z"),
+     *             @OA\Property(property="services", type="object",
+     *                 @OA\Property(property="database", type="string", example="ok"),
+     *                 @OA\Property(property="cache", type="string", example="ok")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function health()
     {
         try {
@@ -32,6 +51,35 @@ class MetricsController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/metrics",
+     *     summary="Get application metrics",
+     *     tags={"Metrics"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Metrics retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="users", type="object",
+     *                 @OA\Property(property="total", type="integer", example=100),
+     *                 @OA\Property(property="online", type="integer", example=25)
+     *             ),
+     *             @OA\Property(property="chats", type="object",
+     *                 @OA\Property(property="total", type="integer", example=50)
+     *             ),
+     *             @OA\Property(property="messages", type="object",
+     *                 @OA\Property(property="total", type="integer", example=1000),
+     *                 @OA\Property(property="today", type="integer", example=100),
+     *                 @OA\Property(property="sent", type="integer", example=5000),
+     *                 @OA\Property(property="avg_send_duration_ms", type="number", format="float", example=150.5)
+     *             ),
+     *             @OA\Property(property="timestamp", type="string", format="date-time", example="2023-10-01T12:00:00Z")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function metrics(Request $request)
     {
         if (!$request->user() || $request->user()->email !== 'admin@test.com') {

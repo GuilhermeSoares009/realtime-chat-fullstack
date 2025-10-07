@@ -8,9 +8,74 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @OA\Schema(
+ * schema="ChatListUser",
+ * type="object",
+ * properties={
+ * @OA\Property(property="id", type="integer", example=2),
+ * @OA\Property(property="name", type="string", example="Alice Smith"),
+ * @OA\Property(property="email", type="string", example="alice@example.com"),
+ * @OA\Property(property="avatar", type="string", nullable=true, example="null"),
+ * @OA\Property(property="is_online", type="boolean", example=true),
+ * @OA\Property(property="last_seen_at", type="string", format="date-time", nullable=true)
+ * }
+ * )
+ * * @OA\Schema(
+ * schema="ChatListItem",
+ * type="object",
+ * allOf={
+ * @OA\Schema(ref="#/components/schemas/Chat"),
+ * @OA\Schema(
+ * properties={
+ * @OA\Property(property="users", type="array", @OA\Items(ref="#/components/schemas/ChatListUser"), description="Outros usuários no chat."),
+ * @OA\Property(property="last_message", type="object", ref="#/components/schemas/Message", nullable=true),
+ * @OA\Property(property="unread_count", type="integer", example=5, description="Número de mensagens não lidas."),
+ * }
+ * )
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="Chat",
+ * type="object",
+ * properties={
+ * @OA\Property(property="id", type="integer", example=1),
+ * @OA\Property(property="type", type="string", enum={"direct", "group"}, example="direct"),
+ * @OA\Property(property="created_at", type="string", format="date-time"),
+ * @OA\Property(property="updated_at", type="string", format="date-time")
+ * }
+ * )
+ */
+
 class ChatController extends Controller
 {
 
+    /**
+     * @OA\Get(
+     * path="/chats",
+     * summary="List all user chats",
+     * tags={"Chats"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * required=false,
+     * description="Number of items per page (default: 20)",
+     * @OA\Schema(type="integer", example=20)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="List of chats successfully retrieved",
+     * @OA\JsonContent(
+     * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ChatListItem")),
+     * @OA\Property(property="links", type="object"),
+     * @OA\Property(property="meta", type="object")
+     * )
+     * ),
+     * @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 20);
@@ -31,6 +96,35 @@ class ChatController extends Controller
         return response()->json($chats);
     }
 
+    /**
+     * @OA\Post(
+     * path="/chats/direct",
+     * summary="Get or create a direct chat",
+     * tags={"Chats"},
+     * security={{"bearerAuth":{}}},
+     * @OA\RequestBody(
+     * required=true,
+     * @OA\JsonContent(
+     * required={"user_id"},
+     * @OA\Property(property="user_id", type="integer", example=5, description="ID of the user to chat with")
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Chat retrieved or created successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="chat", type="object", ref="#/components/schemas/ChatListItem")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error or cannot chat with self",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Cannot create chat with yourself")
+     * )
+     * )
+     * )
+     */
     public function getOrCreateDirectChat(Request $request)
     {
         $validated = $request->validate([
@@ -78,6 +172,29 @@ class ChatController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     * path="/chats/{id}",
+     * summary="Get a specific chat by ID",
+     * tags={"Chats"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="id",
+     * in="path",
+     * required=true,
+     * description="ID of the chat",
+     * @OA\Schema(type="integer", example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Chat found successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="chat", type="object", ref="#/components/schemas/ChatListItem")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat not found or user not a member")
+     * )
+     */
     public function show(Request $request, $id)
     {
         $chat = $request->user()
@@ -92,6 +209,29 @@ class ChatController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     * path="/chats/{id}",
+     * summary="Leave or delete a chat",
+     * tags={"Chats"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="id",
+     * in="path",
+     * required=true,
+     * description="ID of the chat",
+     * @OA\Schema(type="integer", example=1)
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Chat successfully left or deleted (No Content)",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Chat deleted successfully")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat not found or user not a member")
+     * )
+     */
     public function destroy(Request $request, $id)
     {
         $chat = $request->user()->chats()->findOrFail($id);
@@ -109,6 +249,29 @@ class ChatController extends Controller
         ], 204);
     }
 
+    /**
+     * @OA\Put(
+     * path="/chats/{id}/read",
+     * summary="Mark all messages in a chat as read",
+     * tags={"Chats"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="id",
+     * in="path",
+     * required=true,
+     * description="ID of the chat",
+     * @OA\Schema(type="integer", example=1)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Chat marked as read successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Chat marked as read")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat not found or user not a member")
+     * )
+     */
     public function markAsRead(Request $request, $id)
     {
         $chat = $request->user()->chats()->findOrFail($id);

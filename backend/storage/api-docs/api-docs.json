@@ -1,0 +1,1673 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Real-time Chat API",
+        "description": "Real-time chat application API",
+        "contact": {
+            "email": "contact@test.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Servidor Local de Desenvolvimento"
+        },
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Local Development Server"
+        },
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "operationId": "08136088c4862c313b35d6518bab8d3a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abcdef..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "operationId": "99d66635c4992aeaa6aa44ff653d0563",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user",
+                "operationId": "6abf3b64a4bc7838d56346f05a5153af",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user",
+                "operationId": "7edae2cdbaafc10dff8c9c4198b320a2",
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats": {
+            "get": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "List all user chats",
+                "operationId": "282fdd00e50391b0857b55cc3769325b",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page (default: 20)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of chats successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ChatListItem"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/direct": {
+            "post": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Get or create a direct chat",
+                "operationId": "6e9762fac3af8cc7056d2bd3cc2e7637",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "description": "ID of the user to chat with",
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Chat retrieved or created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "chat": {
+                                            "$ref": "#/components/schemas/ChatListItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error or cannot chat with self",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cannot create chat with yourself"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{id}": {
+            "get": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Get a specific chat by ID",
+                "operationId": "7fb2951546973e68c2290d294fbddb53",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat found successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "chat": {
+                                            "$ref": "#/components/schemas/ChatListItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat not found or user not a member"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Leave or delete a chat",
+                "operationId": "99a2ee39c6b08e32fd1636a7ebf274eb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Chat successfully left or deleted (No Content)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chat deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat not found or user not a member"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{id}/read": {
+            "put": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Mark all messages in a chat as read",
+                "operationId": "cd4818bd8321e31ddbdb571840369a58",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat marked as read successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chat marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat not found or user not a member"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/contacts": {
+            "get": {
+                "tags": [
+                    "Contacts"
+                ],
+                "summary": "List user contacts",
+                "operationId": "7b8056a6c305d3995f6d8cc46d3cae65",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page (default: 50)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of contacts successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Contact"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/contacts/search": {
+            "get": {
+                "tags": [
+                    "Contacts"
+                ],
+                "summary": "Search for users/contacts",
+                "operationId": "c27c7ec3ce6fc28ae1a5d418aa50ab32",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term (name or email)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "alice"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page (default: 20)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Contact"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{chatId}/messages": {
+            "get": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "List messages in a chat",
+                "operationId": "9674200f7930a7c481102359f5aab97f",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de mensagens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 50
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Busca por conteúdo na mensagem",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "como vai"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de mensagens paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Message"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat não encontrado ou usuário não é participante"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Send a new message to a chat",
+                "operationId": "4ddee1b7fed4f0fb8b9aa89baec494b2",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Esta é uma nova mensagem."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Message sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/Message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat não encontrado ou usuário não é participante"
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., empty content)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{chatId}/messages/{messageId}": {
+            "put": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Update a message",
+                "operationId": "3b40fbf32546d6032556644f21ecce88",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "ID da mensagem",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Esta é a mensagem atualizada."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Message updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/Message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat ou mensagem não encontrado, ou usuário não é o autor"
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., empty content)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Delete a message",
+                "operationId": "33d8e2f8df5e3e2c2c8d5c575c1df04b",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "ID da mensagem",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Message deleted successfully"
+                    },
+                    "404": {
+                        "description": "Chat ou mensagem não encontrado, ou usuário não é o autor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{chatId}/messages/{messageId}/read": {
+            "post": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Mark a message as read",
+                "operationId": "d697aed60e27dcdf246942611714f160",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "path",
+                        "description": "ID da mensagem",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message marked as read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Message marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat ou mensagem não encontrado, ou usuário é o autor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/messages/search": {
+            "get": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Search messages across all chats",
+                "operationId": "2d3311eede42ce8e10a717d72041efc9",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Termo de busca",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "palavra-chave"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results paginated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Message"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., missing search term)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/chats/{chatId}/typing": {
+            "post": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Send typing status in a chat",
+                "operationId": "b98aec5d5d5bb8a61079d1601e7303b0",
+                "parameters": [
+                    {
+                        "name": "chatId",
+                        "in": "path",
+                        "description": "ID do chat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TypingStatus"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Typing status sent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Typing status sent"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chat não encontrado ou usuário não é participante"
+                    },
+                    "422": {
+                        "description": "Validation error (e.g., missing or invalid is_typing)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/metrics/health": {
+            "get": {
+                "tags": [
+                    "Metrics"
+                ],
+                "summary": "Get system health status",
+                "operationId": "0523de675a141c2fa6f42d9930757fe0",
+                "responses": {
+                    "200": {
+                        "description": "System is healthy",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2023-10-01T12:00:00Z"
+                                        },
+                                        "services": {
+                                            "properties": {
+                                                "database": {
+                                                    "type": "string",
+                                                    "example": "ok"
+                                                },
+                                                "cache": {
+                                                    "type": "string",
+                                                    "example": "ok"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "get": {
+                "tags": [
+                    "Metrics"
+                ],
+                "summary": "Get application metrics",
+                "operationId": "82f7342a6ff73d3e46d3415ae28811ce",
+                "responses": {
+                    "200": {
+                        "description": "Metrics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "online": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "chats": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "messages": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 1000
+                                                },
+                                                "today": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "sent": {
+                                                    "type": "integer",
+                                                    "example": 5000
+                                                },
+                                                "avg_send_duration_ms": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 150.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2023-10-01T12:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Retorna dados do usuário pelo ID ou do usuário autenticado se ID omitido",
+                "operationId": "6946bbab7898f59a09e3c8e529a38907",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário (opcional para o usuário autenticado)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "put": {
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Atualiza os dados do usuário autenticado",
+                "operationId": "f43f02fc5721b154d153c0dd63688a55",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Novo Nome"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "maxLength": 255,
+                                        "example": "novo@email.com"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "maxLength": 500,
+                                        "nullable": true
+                                    },
+                                    "avatar": {
+                                        "description": "Base64 ou URL",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 8,
+                                        "nullable": true
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Profile updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Deleta conta do usuário autenticado",
+                "operationId": "419270175844d690385da65609d32c29",
+                "responses": {
+                    "204": {
+                        "description": "Conta deletada com sucesso"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/search": {
+            "get": {
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Busca usuários pelo nome ou email",
+                "operationId": "2a0853a6b9d59306dc35a19c3ae35713",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Termo de busca",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "john"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista paginada de usuários",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/online-status": {
+            "put": {
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Atualiza status online do usuário autenticado",
+                "operationId": "c9a224ccf331f73cdfb5a8322a8ef6ba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "is_online"
+                                ],
+                                "properties": {
+                                    "is_online": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ChatListUser": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Alice Smith"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "alice@example.com"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "null",
+                        "nullable": true
+                    },
+                    "is_online": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "last_seen_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ChatListItem": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Chat"
+                    },
+                    {
+                        "properties": {
+                            "users": {
+                                "description": "Outros usuários no chat.",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ChatListUser"
+                                }
+                            },
+                            "last_message": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Message"
+                                    }
+                                ],
+                                "nullable": true,
+                                "type": "object"
+                            },
+                            "unread_count": {
+                                "description": "Número de mensagens não lidas.",
+                                "type": "integer",
+                                "example": 5
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "Chat": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "direct",
+                            "group"
+                        ],
+                        "example": "direct"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Contact": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Alice Smith"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "alice@example.com"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "null",
+                        "nullable": true
+                    },
+                    "bio": {
+                        "type": "string",
+                        "example": "Software Developer.",
+                        "nullable": true
+                    },
+                    "is_online": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "last_seen_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Message": {
+                "title": "Message",
+                "required": [
+                    "id",
+                    "content",
+                    "user_id",
+                    "chat_id",
+                    "created_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "This is a message content."
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "chat_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:34:56Z"
+                    },
+                    "user": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "John Doe"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "format": "url",
+                                "example": "http://example.com/avatar.jpg"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "TypingStatus": {
+                "title": "TypingStatus",
+                "required": [
+                    "is_typing"
+                ],
+                "properties": {
+                    "is_typing": {
+                        "description": "Indicates if the user is typing",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Usuário",
+            "description": "Endpoints relacionados ao usuário"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Chats",
+            "description": "Chats"
+        },
+        {
+            "name": "Contacts",
+            "description": "Contacts"
+        },
+        {
+            "name": "Messages",
+            "description": "Messages"
+        },
+        {
+            "name": "Metrics",
+            "description": "Metrics"
+        }
+    ]
+}

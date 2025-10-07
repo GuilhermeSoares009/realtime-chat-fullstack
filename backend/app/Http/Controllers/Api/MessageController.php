@@ -13,9 +13,79 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
+
+/**
+ * @OA\Schema(
+ *     schema="Message",
+ *     type="object",
+ *     title="Message",
+ *     required={"id", "content", "user_id", "chat_id", "created_at"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="content", type="string", example="This is a message content."),
+ *     @OA\Property(property="user_id", type="integer", example=1),
+ *     @OA\Property(property="chat_id", type="integer", example=1),
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-10-01T12:34:56Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-10-01T12:34:56Z"),
+ *     @OA\Property(
+ *         property="user",
+ *         type="object",
+ *         @OA\Property(property="id", type="integer", example=1),
+ *         @OA\Property(property="name", type="string", example="John Doe"),
+ *         @OA\Property(property="avatar", type="string", format="url", example="http://example.com/avatar.jpg")
+ *     )
+ * )
+ * 
+ * @OA\Schema(
+ *     schema="TypingStatus",
+ *     type="object",
+ *     title="TypingStatus",
+ *     required={"is_typing"},
+ *     @OA\Property(property="is_typing", type="boolean", example=true, description="Indicates if the user is typing")
+ * )
+ */
 class MessageController extends Controller
 {
 
+    /**
+     * @OA\Get(
+     * path="/chats/{chatId}/messages",
+     * summary="List messages in a chat",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * required=false,
+     * @OA\Schema(type="integer", example=50),
+     * description="Número de mensagens por página"
+     * ),
+     * @OA\Parameter(
+     * name="search",
+     * in="query",
+     * required=false,
+     * @OA\Schema(type="string", example="como vai"),
+     * description="Busca por conteúdo na mensagem"
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Lista de mensagens paginada",
+     * @OA\JsonContent(
+     * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Message")),
+     * @OA\Property(property="links", type="object"),
+     * @OA\Property(property="meta", type="object")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat não encontrado ou usuário não é participante")
+     * )
+     */
     public function index(Request $request, $chatId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
@@ -35,6 +105,37 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
+    /**
+     * @OA\Post(
+     * path="/chats/{chatId}/messages",
+     * summary="Send a new message to a chat",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * @OA\JsonContent(
+     * required={"content"},
+     * @OA\Property(property="content", type="string", example="Esta é uma nova mensagem."),
+     * )
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Message sent successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", ref="#/components/schemas/Message")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat não encontrado ou usuário não é participante"),
+     * @OA\Response(response=422, description="Validation error (e.g., empty content)")
+     * )
+     */
     public function store(Request $request, $chatId)
     {
         $startTime = microtime(true);
@@ -73,6 +174,44 @@ class MessageController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Put(
+     * path="/chats/{chatId}/messages/{messageId}",
+     * summary="Update a message",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\Parameter(
+     * name="messageId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=10),
+     * description="ID da mensagem"
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * @OA\JsonContent(
+     * required={"content"},
+     * @OA\Property(property="content", type="string", example="Esta é a mensagem atualizada."),
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Message updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", ref="#/components/schemas/Message")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat ou mensagem não encontrado, ou usuário não é o autor"),
+     * @OA\Response(response=422, description="Validation error (e.g., empty content)")
+     * )
+     */
     public function update(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
@@ -93,6 +232,30 @@ class MessageController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     * path="/chats/{chatId}/messages/{messageId}",
+     * summary="Delete a message",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\Parameter(
+     * name="messageId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=10),
+     * description="ID da mensagem"
+     * ),
+     * @OA\Response(response=204, description="Message deleted successfully"),
+     * @OA\Response(response=404, description="Chat ou mensagem não encontrado, ou usuário não é o autor")
+     * )
+     */
     public function destroy(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
@@ -109,6 +272,36 @@ class MessageController extends Controller
         ], 204);
     }
 
+    /**
+     * @OA\Post(
+     * path="/chats/{chatId}/messages/{messageId}/read",
+     * summary="Mark a message as read",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\Parameter(
+     * name="messageId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=10),
+     * description="ID da mensagem"
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Message marked as read",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Message marked as read")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat ou mensagem não encontrado, ou usuário é o autor")
+     * )
+     */
     public function markAsRead(Request $request, $chatId, $messageId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
@@ -127,6 +320,38 @@ class MessageController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     * path="/messages/search",
+     * summary="Search messages across all chats",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="q",
+     * in="query",
+     * required=true,
+     * @OA\Schema(type="string", example="palavra-chave"),
+     * description="Termo de busca"
+     * ),
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * required=false,
+     * @OA\Schema(type="integer", example=20),
+     * description="Número de resultados por página"
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Search results paginated",
+     * @OA\JsonContent(
+     * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Message")),
+     * @OA\Property(property="links", type="object"),
+     * @OA\Property(property="meta", type="object")
+     * )
+     * ),
+     * @OA\Response(response=422, description="Validation error (e.g., missing search term)")
+     * )
+     */  
     public function search(Request $request)
     {
         $query = $request->input('q', '');
@@ -143,6 +368,34 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
+    /**
+     * @OA\Post(
+     * path="/chats/{chatId}/typing",
+     * summary="Send typing status in a chat",
+     * tags={"Messages"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="chatId",
+     * in="path",
+     * required=true,
+     * @OA\Schema(type="integer", example=1),
+     * description="ID do chat"
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * @OA\JsonContent(ref="#/components/schemas/TypingStatus")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Typing status sent",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Typing status sent")
+     * )
+     * ),
+     * @OA\Response(response=404, description="Chat não encontrado ou usuário não é participante"),
+     * @OA\Response(response=422, description="Validation error (e.g., missing or invalid is_typing)")
+     * )
+     */
     public function typing(Request $request, $chatId)
     {
         $chat = $request->user()->chats()->findOrFail($chatId);
