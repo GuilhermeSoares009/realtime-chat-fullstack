@@ -1,6 +1,6 @@
 # Real-time Chat Application
 
-Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Reverb.
+Desafio técnico sobre criação de um Chat em tempo real.
 
 ![Diagrama](application-diagram.svg)
 
