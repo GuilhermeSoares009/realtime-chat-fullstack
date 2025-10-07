@@ -44,10 +44,8 @@ docker-compose up -d
 
 docker-compose exec backend bash
 
-# Rodar migrations
 php artisan migrate
 
-# Popular banco com seeders
 php artisan db:seed
 ```
 
