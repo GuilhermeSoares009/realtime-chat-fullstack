@@ -7,18 +7,18 @@ Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Rever
 ### Backend
 - Laravel 11
 - PHP 8.3
-- PostgreSQL (ou SQLite para dev)
-- Laravel Sanctum (autenticação)
-- Laravel Reverb (WebSockets)
-- Redis (cache e queues)
-- Telescope (debugging)
+- PostgreSQL/Sqlite
+- Laravel Sanctum
+- Laravel Reverb
+- Redis
+- Telescope
 
 ### Frontend
 - Next.js 14
 - React 18
 - Tailwind CSS
-- Laravel Echo (realtime)
-- Zustand (state management)
+- Laravel Echo
+- Zustand
 
 ---
 
