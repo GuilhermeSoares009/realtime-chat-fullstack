@@ -4,6 +4,7 @@ import Provider from "@components/Provider";
 import TopBar from "@components/TopBar";
 import BottomBar from "@components/BottomBar";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

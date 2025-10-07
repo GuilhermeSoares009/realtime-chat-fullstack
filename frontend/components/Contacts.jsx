@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { CheckCircle, RadioButtonUnchecked } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { avatarUrl } from '@/lib/avatar';
 
 const Contacts = () => {
   const [loading, setLoading] = useState(true);

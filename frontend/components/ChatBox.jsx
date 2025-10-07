@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { avatarUrl } from '@/lib/avatar';
 
 const ChatBox = ({ chat, currentUser, currentChatId }) => {
   const users = chat?.users ?? chat?.members ?? [];

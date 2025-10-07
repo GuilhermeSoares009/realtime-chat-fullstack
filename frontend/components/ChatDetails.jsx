@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import MessageBox from "./MessageBox";
 import { apiClient } from '@/lib/api-client';
 import { getEcho } from '@/lib/pusher';
+import { avatarUrl } from '@/lib/avatar';
 
 const ChatDetails = ({ chatId }) => {
   const [loading, setLoading] = useState(true);
