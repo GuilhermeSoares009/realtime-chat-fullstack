@@ -21,16 +21,14 @@ Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Rever
 ### 1. Backend
 
 ```bash
-# Subir todos os serviços (backend, frontend, DB, Redis)
+cd backend
+
 docker-compose up -d
 
-# Entrar no container do backend
 docker-compose exec backend bash
 
-# Rodar migrations
 php artisan migrate
 
-# Popular banco com seeders
 php artisan db:seed
 ```
 
@@ -38,7 +36,6 @@ O backend estará disponível em http://localhost:8000.
 
 ### 2. Frontend
 ```bash
-Copiar código
 cd frontend
 
 npm install
@@ -49,15 +46,11 @@ npm run dev
 Frontend disponível em http://localhost:3000.
 
 #### Features Implementadas
-✅ Autenticação com Bearer tokens (Sanctum)  
-✅ Chat 1:1 em tempo real  
-✅ Indicador de digitação  
-✅ Status online/offline  
+✅ Autenticação  
+✅ Chat      
 ✅ Histórico de mensagens com paginação  
-✅ Busca de usuários  
-✅ Marcação de mensagens lidas  
-✅ Broadcasting com Reverb  
-✅ Logging estruturado  
+✅ Busca de usuários    
+✅ Logging  
 ✅ Testes automatizados  
 ✅ Documentação Swagger  
 
