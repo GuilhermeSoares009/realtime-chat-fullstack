@@ -39,6 +39,7 @@ Sistema de chat em tempo real com Laravel + Next.js + PostgreSQL + Laravel Rever
 ### 1. Backend
 
 ```bash
+cd backend
 
 docker-compose up -d
 
