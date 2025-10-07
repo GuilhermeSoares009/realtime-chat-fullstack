@@ -1,146 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\phpunit.xml" tests="17" assertions="47" errors="0" failures="1" skipped="0" time="1.667261">
-    <testsuite name="Unit" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="1.071551">
-      <testsuite name="Tests\Unit\ExampleTest" file="Example (Tests\Unit\Example)" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.005229">
-        <testcase name="That true is true" file="Example (Tests\Unit\Example)::That true is true" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.005229"/>
+  <testsuite name="C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\phpunit.xml" tests="17" assertions="54" errors="0" failures="0" skipped="0" time="2.219522">
+    <testsuite name="Unit" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="1.072825">
+      <testsuite name="Tests\Unit\ExampleTest" file="Example (Tests\Unit\Example)" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.005388">
+        <testcase name="That true is true" file="Example (Tests\Unit\Example)::That true is true" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.005388"/>
       </testsuite>
-      <testsuite name="Tests\Unit\Models\UserTest" file="tests\Unit\Models\UserTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="1.066322">
-        <testcase name="user has many chats" file="tests\Unit\Models\UserTest.php::user has many chats" class="Tests\Unit\Models\UserTest" classname="Tests.Unit.Models.UserTest" assertions="2" time="1.041560"/>
-        <testcase name="user can update online status" file="tests\Unit\Models\UserTest.php::user can update online status" class="Tests\Unit\Models\UserTest" classname="Tests.Unit.Models.UserTest" assertions="2" time="0.024761"/>
+      <testsuite name="Tests\Unit\Models\UserTest" file="tests\Unit\Models\UserTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="1.067437">
+        <testcase name="user has many chats" file="tests\Unit\Models\UserTest.php::user has many chats" class="Tests\Unit\Models\UserTest" classname="Tests.Unit.Models.UserTest" assertions="2" time="1.038904"/>
+        <testcase name="user can update online status" file="tests\Unit\Models\UserTest.php::user can update online status" class="Tests\Unit\Models\UserTest" classname="Tests.Unit.Models.UserTest" assertions="2" time="0.028533"/>
       </testsuite>
     </testsuite>
-    <testsuite name="Feature" tests="14" assertions="42" errors="0" failures="1" skipped="0" time="0.595710">
-      <testsuite name="Tests\Feature\Auth\LoginTest" file="tests\Feature\Auth\LoginTest.php" tests="3" assertions="9" errors="0" failures="0" skipped="0" time="0.145300">
-        <testcase name="user can login with valid credentials" file="tests\Feature\Auth\LoginTest.php::user can login with valid credentials" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="7" time="0.095641"/>
-        <testcase name="login fails with invalid credentials" file="tests\Feature\Auth\LoginTest.php::login fails with invalid credentials" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="1" time="0.028777"/>
-        <testcase name="login fails with non-existent user" file="tests\Feature\Auth\LoginTest.php::login fails with non-existent user" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="1" time="0.020882"/>
+    <testsuite name="Feature" tests="14" assertions="49" errors="0" failures="0" skipped="0" time="1.146697">
+      <testsuite name="Tests\Feature\Auth\LoginTest" file="tests\Feature\Auth\LoginTest.php" tests="3" assertions="9" errors="0" failures="0" skipped="0" time="0.133979">
+        <testcase name="user can login with valid credentials" file="tests\Feature\Auth\LoginTest.php::user can login with valid credentials" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="7" time="0.088778"/>
+        <testcase name="login fails with invalid credentials" file="tests\Feature\Auth\LoginTest.php::login fails with invalid credentials" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="1" time="0.026272"/>
+        <testcase name="login fails with non-existent user" file="tests\Feature\Auth\LoginTest.php::login fails with non-existent user" class="Tests\Feature\Auth\LoginTest" classname="Tests.Feature.Auth.LoginTest" assertions="1" time="0.018928"/>
       </testsuite>
-      <testsuite name="Tests\Feature\Auth\RegisterTest" file="tests\Feature\Auth\RegisterTest.php" tests="4" assertions="17" errors="0" failures="0" skipped="0" time="0.108315">
-        <testcase name="user can register with valid data" file="tests\Feature\Auth\RegisterTest.php::user can register with valid data" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="8" time="0.032280"/>
-        <testcase name="registration fails with invalid email" file="tests\Feature\Auth\RegisterTest.php::registration fails with invalid email" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.029067"/>
-        <testcase name="registration fails with mismatched passwords" file="tests\Feature\Auth\RegisterTest.php::registration fails with mismatched passwords" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.023128"/>
-        <testcase name="registration fails with duplicate email" file="tests\Feature\Auth\RegisterTest.php::registration fails with duplicate email" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.023840"/>
+      <testsuite name="Tests\Feature\Auth\RegisterTest" file="tests\Feature\Auth\RegisterTest.php" tests="4" assertions="17" errors="0" failures="0" skipped="0" time="0.159372">
+        <testcase name="user can register with valid data" file="tests\Feature\Auth\RegisterTest.php::user can register with valid data" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="8" time="0.029623"/>
+        <testcase name="registration fails with invalid email" file="tests\Feature\Auth\RegisterTest.php::registration fails with invalid email" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.038821"/>
+        <testcase name="registration fails with mismatched passwords" file="tests\Feature\Auth\RegisterTest.php::registration fails with mismatched passwords" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.055442"/>
+        <testcase name="registration fails with duplicate email" file="tests\Feature\Auth\RegisterTest.php::registration fails with duplicate email" class="Tests\Feature\Auth\RegisterTest" classname="Tests.Feature.Auth.RegisterTest" assertions="3" time="0.035486"/>
       </testsuite>
-      <testsuite name="Tests\Feature\Chat\CreateChatTest" file="tests\Feature\Chat\CreateChatTest.php" tests="3" assertions="10" errors="0" failures="0" skipped="0" time="0.086994">
-        <testcase name="authenticated user can create direct chat" file="tests\Feature\Chat\CreateChatTest.php::authenticated user can create direct chat" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="8" time="0.037767"/>
-        <testcase name="cannot create chat with yourself" file="tests\Feature\Chat\CreateChatTest.php::cannot create chat with yourself" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="1" time="0.025664"/>
-        <testcase name="unauthenticated user cannot create chat" file="tests\Feature\Chat\CreateChatTest.php::unauthenticated user cannot create chat" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="1" time="0.023563"/>
+      <testsuite name="Tests\Feature\Chat\CreateChatTest" file="tests\Feature\Chat\CreateChatTest.php" tests="3" assertions="10" errors="0" failures="0" skipped="0" time="0.075272">
+        <testcase name="authenticated user can create direct chat" file="tests\Feature\Chat\CreateChatTest.php::authenticated user can create direct chat" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="8" time="0.033041"/>
+        <testcase name="cannot create chat with yourself" file="tests\Feature\Chat\CreateChatTest.php::cannot create chat with yourself" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="1" time="0.021470"/>
+        <testcase name="unauthenticated user cannot create chat" file="tests\Feature\Chat\CreateChatTest.php::unauthenticated user cannot create chat" class="Tests\Feature\Chat\CreateChatTest" classname="Tests.Feature.Chat.CreateChatTest" assertions="1" time="0.020761"/>
       </testsuite>
-      <testsuite name="Tests\Feature\ExampleTest" file="Example (Tests\Feature\Example)" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.032926">
-        <testcase name="The application returns a successful response" file="Example (Tests\Feature\Example)::The application returns a successful response" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.032926"/>
+      <testsuite name="Tests\Feature\ExampleTest" file="Example (Tests\Feature\Example)" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.052257">
+        <testcase name="The application returns a successful response" file="Example (Tests\Feature\Example)::The application returns a successful response" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.052257"/>
       </testsuite>
-      <testsuite name="Tests\Feature\Message\SendMessageTest" file="tests\Feature\Message\SendMessageTest.php" tests="3" assertions="5" errors="0" failures="1" skipped="0" time="0.222175">
-        <testcase name="authenticated user can send message to chat" file="tests\Feature\Message\SendMessageTest.php::authenticated user can send message to chat" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="1" time="0.148777">
-          <failure type="PHPUnit\Framework\ExpectationFailedException">authenticated user can send message to chatExpected response status code [201] but received 500.
-Failed asserting that 500 is identical to 201.&#13;
-&#13;
-The following exception occurred during the last request:
-
-Illuminate\Broadcasting\BroadcastException: Pusher error: cURL error 52: Empty reply from server (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://localhost:8080/apps/local-app-id/events?auth_key=local-app-key&amp;auth_timestamp=1759807290&amp;auth_version=1.0&amp;body_md5=53fba5e9189fd496114842042d797b0e&amp;auth_signature=b0457b27380c71bc6c5afe5df8a5f61b4e0d09ded035a416d31c81be04adf0cb. in C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Broadcasting\Broadcasters\PusherBroadcaster.php:164
-Stack trace:
-#0 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Broadcasting\BroadcastEvent.php(93): Illuminate\Broadcasting\Broadcasters\PusherBroadcaster-&gt;broadcast()
-#1 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php(36): Illuminate\Broadcasting\BroadcastEvent-&gt;handle()
-#2 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Container\Util.php(43): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
-#3 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php(95): Illuminate\Container\Util::unwrapIfClosure()
-#4 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php(35): Illuminate\Container\BoundMethod::callBoundMethod()
-#5 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Container\Container.php(696): Illuminate\Container\BoundMethod::call()
-#6 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Bus\Dispatcher.php(126): Illuminate\Container\Container-&gt;call()
-#7 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Bus\Dispatcher-&gt;Illuminate\Bus\{closure}()
-#8 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#9 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Bus\Dispatcher.php(130): Illuminate\Pipeline\Pipeline-&gt;then()
-#10 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\CallQueuedHandler.php(126): Illuminate\Bus\Dispatcher-&gt;dispatchNow()
-#11 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Queue\CallQueuedHandler-&gt;Illuminate\Queue\{closure}()
-#12 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#13 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\CallQueuedHandler.php(121): Illuminate\Pipeline\Pipeline-&gt;then()
-#14 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\CallQueuedHandler.php(69): Illuminate\Queue\CallQueuedHandler-&gt;dispatchThroughMiddleware()
-#15 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\Jobs\Job.php(102): Illuminate\Queue\CallQueuedHandler-&gt;call()
-#16 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\SyncQueue.php(76): Illuminate\Queue\Jobs\Job-&gt;fire()
-#17 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\SyncQueue.php(56): Illuminate\Queue\SyncQueue-&gt;executeJob()
-#18 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Queue\Queue.php(59): Illuminate\Queue\SyncQueue-&gt;push()
-#19 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Broadcasting\BroadcastManager.php(207): Illuminate\Queue\Queue-&gt;pushOn()
-#20 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Events\Dispatcher.php(358): Illuminate\Broadcasting\BroadcastManager-&gt;queue()
-#21 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Events\Dispatcher.php(281): Illuminate\Events\Dispatcher-&gt;broadcastEvent()
-#22 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Events\Dispatcher.php(267): Illuminate\Events\Dispatcher-&gt;invokeListeners()
-#23 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Broadcasting\PendingBroadcast.php(72): Illuminate\Events\Dispatcher-&gt;dispatch()
-#24 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\app\Http\Controllers\Api\MessageController.php(64): Illuminate\Broadcasting\PendingBroadcast-&gt;__destruct()
-#25 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php(47): App\Http\Controllers\Api\MessageController-&gt;store()
-#26 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Route.php(266): Illuminate\Routing\ControllerDispatcher-&gt;dispatch()
-#27 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Route.php(212): Illuminate\Routing\Route-&gt;runController()
-#28 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Router.php(808): Illuminate\Routing\Route-&gt;run()
-#29 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Routing\Router-&gt;Illuminate\Routing\{closure}()
-#30 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\app\Http\Middleware\LogApiRequests.php(21): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#31 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): App\Http\Middleware\LogApiRequests-&gt;handle()
-#32 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php(51): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#33 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Routing\Middleware\SubstituteBindings-&gt;handle()
-#34 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Auth\Middleware\Authenticate.php(64): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#35 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Auth\Middleware\Authenticate-&gt;handle()
-#36 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\sanctum\src\Http\Middleware\EnsureFrontendRequestsAreStateful.php(26): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#37 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful-&gt;Laravel\Sanctum\Http\Middleware\{closure}()
-#38 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#39 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\sanctum\src\Http\Middleware\EnsureFrontendRequestsAreStateful.php(25): Illuminate\Pipeline\Pipeline-&gt;then()
-#40 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful-&gt;handle()
-#41 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#42 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Router.php(807): Illuminate\Pipeline\Pipeline-&gt;then()
-#43 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Router.php(786): Illuminate\Routing\Router-&gt;runRouteWithinStack()
-#44 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Router.php(750): Illuminate\Routing\Router-&gt;runRoute()
-#45 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Routing\Router.php(739): Illuminate\Routing\Router-&gt;dispatchToRoute()
-#46 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(201): Illuminate\Routing\Router-&gt;dispatch()
-#47 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Foundation\Http\Kernel-&gt;Illuminate\Foundation\Http\{closure}()
-#48 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#49 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest-&gt;handle()
-#50 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull-&gt;handle()
-#51 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#52 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest-&gt;handle()
-#53 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\TrimStrings-&gt;handle()
-#54 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#55 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\ValidatePostSize-&gt;handle()
-#56 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php(110): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#57 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance-&gt;handle()
-#58 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php(62): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#59 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\HandleCors-&gt;handle()
-#60 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php(58): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#61 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\TrustProxies-&gt;handle()
-#62 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#63 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks-&gt;handle()
-#64 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline-&gt;Illuminate\Pipeline\{closure}()
-#65 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(176): Illuminate\Pipeline\Pipeline-&gt;then()
-#66 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(145): Illuminate\Foundation\Http\Kernel-&gt;sendRequestThroughRouter()
-#67 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel-&gt;handle()
-#68 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase-&gt;call()
-#69 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase-&gt;json()
-#70 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\tests\Feature\Message\SendMessageTest.php(15): Illuminate\Foundation\Testing\TestCase-&gt;postJson()
-#71 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Factories\TestCaseMethodFactory.php(168): P\Tests\Feature\Message\SendMessageTest-&gt;{closure}()
-#72 [internal function]: P\Tests\Feature\Message\SendMessageTest-&gt;Pest\Factories\{closure}()
-#73 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Concerns\Testable.php(419): call_user_func_array()
-#74 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Support\ExceptionTrace.php(26): P\Tests\Feature\Message\SendMessageTest-&gt;Pest\Concerns\{closure}()
-#75 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Concerns\Testable.php(419): Pest\Support\ExceptionTrace::ensure()
-#76 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Concerns\Testable.php(321): P\Tests\Feature\Message\SendMessageTest-&gt;__callClosure()
-#77 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Factories\TestCaseFactory.php(169) : eval()'d code(17): P\Tests\Feature\Message\SendMessageTest-&gt;__runTest()
-#78 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestCase.php(1656): P\Tests\Feature\Message\SendMessageTest-&gt;__pest_evaluable_authenticated_user_can_send_message_to_chat()
-#79 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestCase.php(514): PHPUnit\Framework\TestCase-&gt;runTest()
-#80 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestRunner\TestRunner.php(87): PHPUnit\Framework\TestCase-&gt;runBare()
-#81 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestCase.php(361): PHPUnit\Framework\TestRunner-&gt;run()
-#82 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestCase-&gt;run()
-#83 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite-&gt;run()
-#84 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite-&gt;run()
-#85 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\TextUI\TestRunner.php(64): PHPUnit\Framework\TestSuite-&gt;run()
-#86 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\phpunit\phpunit\src\TextUI\Application.php(211): PHPUnit\TextUI\TestRunner-&gt;run()
-#87 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\src\Kernel.php(103): PHPUnit\TextUI\Application-&gt;run()
-#88 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\bin\pest(184): Pest\Kernel-&gt;handle()
-#89 C:\Users\Guilherme 3s\Desktop\Projetos de Programação\realtime-chat-fullstack\backend\vendor\pestphp\pest\bin\pest(192): {closure}()
-#90 {main}
-
-----------------------------------------------------------------------------------
-
-Pusher error: cURL error 52: Empty reply from server (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://localhost:8080/apps/local-app-id/events?auth_key=local-app-key&amp;auth_timestamp=1759807290&amp;auth_version=1.0&amp;body_md5=53fba5e9189fd496114842042d797b0e&amp;auth_signature=b0457b27380c71bc6c5afe5df8a5f61b4e0d09ded035a416d31c81be04adf0cb.&#13;
-&#13;
-at vendor\laravel\framework\src\Illuminate\Testing\TestResponseAssert.php:45
-at vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:160
-at tests\Feature\Message\SendMessageTest.php:19</failure>
-        </testcase>
-        <testcase name="cannot send empty message" file="tests\Feature\Message\SendMessageTest.php::cannot send empty message" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="3" time="0.039901"/>
-        <testcase name="cannot send message to chat user is not part of" file="tests\Feature\Message\SendMessageTest.php::cannot send message to chat user is not part of" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="1" time="0.033497"/>
+      <testsuite name="Tests\Feature\Message\SendMessageTest" file="tests\Feature\Message\SendMessageTest.php" tests="3" assertions="12" errors="0" failures="0" skipped="0" time="0.725816">
+        <testcase name="authenticated user can send message to chat" file="tests\Feature\Message\SendMessageTest.php::authenticated user can send message to chat" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="8" time="0.674354"/>
+        <testcase name="cannot send empty message" file="tests\Feature\Message\SendMessageTest.php::cannot send empty message" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="3" time="0.025268"/>
+        <testcase name="cannot send message to chat user is not part of" file="tests\Feature\Message\SendMessageTest.php::cannot send message to chat user is not part of" class="Tests\Feature\Message\SendMessageTest" classname="Tests.Feature.Message.SendMessageTest" assertions="1" time="0.026195"/>
       </testsuite>
     </testsuite>
   </testsuite>

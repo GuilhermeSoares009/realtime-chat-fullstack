@@ -3,11 +3,12 @@
 use App\Models\User;
 use App\Models\Chat;
 use App\Models\Message;
+use Illuminate\Support\Facades\Broadcast;
 
 test('authenticated user can send message to chat', function () {
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
-    
+
     $chat = Chat::factory()->create(['type' => 'direct']);
     $chat->users()->attach([$user1->id, $user2->id]);
 
@@ -16,7 +17,7 @@ test('authenticated user can send message to chat', function () {
             'content' => 'Hello, this is a test message!',
         ]);
 
-    $response->assertStatus(201)
+    $response->assertStatus(201) 
         ->assertJsonStructure([
             'message' => ['id', 'content', 'user_id', 'chat_id', 'created_at'],
         ]);
