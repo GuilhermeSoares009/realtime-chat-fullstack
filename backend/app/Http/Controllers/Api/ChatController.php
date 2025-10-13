@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * @OA\Schema(
@@ -85,20 +86,21 @@ class ChatController extends Controller
 
         $cacheKey = "user:{$userId}:chats:page:{$page}:per_page:{$perPage}";
 
-        $chats = Cache::remember($cacheKey, 120, function () use ($request, $perPage, $userId) {
-            return $request->user()
-                ->chats()
-                ->with(['lastMessage.user', 'users' => function ($query) use ($userId) {
-                    $query->where('users.id', '!=', $userId)
-                        ->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.is_online', 'users.last_seen_at');
-                }])
-                ->withCount(['messages as unread_count' => function ($query) use ($userId) {
-                    $query->where('user_id', '!=', $userId)
-                        ->where('is_read', false);
-                }])
-                ->orderBy('updated_at', 'desc')
-                ->paginate($perPage);
-        });
+        $chats = Cache::tags(["user:{$userId}:chats"])
+            ->remember($cacheKey, 120, function () use ($request, $perPage, $userId) {
+                return $request->user()
+                    ->chats()
+                    ->with(['lastMessage.user', 'users' => function ($query) use ($userId) {
+                        $query->where('users.id', '!=', $userId)
+                            ->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.is_online', 'users.last_seen_at');
+                    }])
+                    ->withCount(['messages as unread_count' => function ($query) use ($userId) {
+                        $query->where('user_id', '!=', $userId)
+                            ->where('is_read', false);
+                    }])
+                    ->orderBy('updated_at', 'desc')
+                    ->paginate($perPage);
+            });
 
         $chats->getCollection()->transform(function ($chat) {
             $chat->users->transform(function ($user) {
@@ -303,19 +305,23 @@ class ChatController extends Controller
     {
         $chat = $request->user()->chats()->findOrFail($id);
 
-        // Update last_read_at in pivot
+        $userId = $request->user()->id;
+
+        Redis::hdel("user:{$userId}:unread", $id);
+
         $request->user()->chats()->updateExistingPivot($chat->id, [
             'last_read_at' => now(),
         ]);
 
-        // Mark all messages as read
         $chat->messages()
-            ->where('user_id', '!=', $request->user()->id)
+            ->where('user_id', '!=', $userId)
             ->where('is_read', false)
             ->update([
                 'is_read' => true,
                 'read_at' => now(),
             ]);
+
+        Cache::tags(["user:{$userId}:chats"])->flush();
 
         return response()->json([
             'message' => 'Chat marked as read',

@@ -60,22 +60,23 @@ class ContactController extends Controller
 
         $cacheKey = "user:{$userId}:contacts:page:{$page}:per_page:{$perPage}";
 
-        $contacts = Cache::remember($cacheKey, 600, function () use ($request, $perPage, $userId) {
-            $contactIds = $request->user()
-                ->chats()
-                ->with('users')
-                ->get()
-                ->pluck('users')
-                ->flatten()
-                ->pluck('id')
-                ->unique()
-                ->reject(fn($id) => $id === $userId);
+        $contacts = Cache::tags(["user:{$userId}:contacts"]) 
+            ->remember($cacheKey, 600, function () use ($request, $perPage, $userId) {
+                $contactIds = $request->user()
+                    ->chats()
+                    ->with('users')
+                    ->get()
+                    ->pluck('users')
+                    ->flatten()
+                    ->pluck('id')
+                    ->unique()
+                    ->reject(fn($id) => $id === $userId);
 
-            return User::whereIn('id', $contactIds)
-                ->select('id', 'name', 'email', 'avatar', 'bio', 'is_online', 'last_seen_at')
-                ->orderBy('name')
-                ->paginate($perPage);
-        });
+                return User::whereIn('id', $contactIds)
+                    ->select('id', 'name', 'email', 'avatar', 'bio', 'is_online', 'last_seen_at')
+                    ->orderBy('name')
+                    ->paginate($perPage);
+            });
 
         $contacts->getCollection()->transform(function ($user) {
             $onlineStatus = Redis::get("user:online:{$user->id}");
