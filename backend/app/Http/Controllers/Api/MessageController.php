@@ -12,8 +12,7 @@ use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
-
+use Illuminate\Support\Facades\Redis;
 
 /**
  * @OA\Schema(
@@ -403,6 +402,18 @@ class MessageController extends Controller
         $validated = $request->validate([
             'is_typing' => 'required|boolean',
         ]);
+
+        $userId = $request->user()->id;
+
+        if($validated['is_typing']){
+            Redis::setex(
+                "chat:{$chatId}:typing:{$userId}",
+                5,
+                true
+            );
+        } else {
+            Redis::del("chat:{$chatId}:typing:{$userId}");
+        }
 
         broadcast(new UserTyping(
             $chat->id,

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -220,7 +221,22 @@ class UserController extends Controller
             'is_online' => 'required|boolean',
         ]);
 
-        $request->user()->updateOnlineStatus($validated['is_online']);
+        $user = $request->user();
+
+        if ($validated['is_online']) {
+            Redis::setex(
+                "user:online:{$user->id}",
+                300,
+                json_encode([
+                    'status' => 'online',
+                    'last_seen' => now()->toIso8601String()
+                ])
+            );
+        }else{
+            Redis::del("user:online:{$user->id}");
+        }
+
+        $user->updateOnlineStatus($validated['is_online']);
 
         broadcast(new UserOnlineStatusChanged($request->user()));
 
