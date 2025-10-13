@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -79,19 +80,40 @@ class ChatController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 20);
-        
-        $chats = $request->user()
-            ->chats()
-            ->with(['lastMessage.user', 'users' => function ($query) use ($request) {
-                $query->where('users.id', '!=', $request->user()->id)
-                      ->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.is_online', 'users.last_seen_at');
-            }])
-            ->withCount(['messages as unread_count' => function ($query) use ($request) {
-                $query->where('user_id', '!=', $request->user()->id)
-                      ->where('is_read', false);
-            }])
-            ->orderBy('updated_at', 'desc')
-            ->paginate($perPage);
+        $page = $request->input('page', 1);
+        $userId = $request->user()->id;
+
+        $cacheKey = "user:{$userId}:chats:page:{$page}:per_page:{$perPage}";
+
+        $chats = Cache::remember($cacheKey, 120, function () use ($request, $perPage, $userId) {
+            return $request->user()
+                ->chats()
+                ->with(['lastMessage.user', 'users' => function ($query) use ($userId) {
+                    $query->where('users.id', '!=', $userId)
+                        ->select('users.id', 'users.name', 'users.email', 'users.avatar', 'users.is_online', 'users.last_seen_at');
+                }])
+                ->withCount(['messages as unread_count' => function ($query) use ($userId) {
+                    $query->where('user_id', '!=', $userId)
+                        ->where('is_read', false);
+                }])
+                ->orderBy('updated_at', 'desc')
+                ->paginate($perPage);
+        });
+
+        $chats->getCollection()->transform(function ($chat) {
+            $chat->users->transform(function ($user) {
+                $onlineStatus = Redis::get("user:online:{$user->id}");
+                if ($onlineStatus) {
+                    $status = json_decode($onlineStatus, true);
+                    $user->is_online = true;
+                    $user->last_seen_at = $status['last_seen'];
+                } else {
+                    $user->is_online = false;
+                }
+                return $user;
+            });
+            return $chat;
+        });
 
         return response()->json($chats);
     }
@@ -161,6 +183,11 @@ class ChatController extends Controller
 
                 return $chat;
             });
+
+            Cache::tags(["user:{$currentUserId}:contacts"])->flush();
+            Cache::tags(["user:{$otherUserId}:contacts"])->flush();
+            Cache::tags(["user:{$currentUserId}:chats"])->flush();
+            Cache::tags(["user:{$otherUserId}:chats"])->flush();
         }
 
         $chat->load(['users' => function ($query) use ($currentUserId) {
@@ -235,10 +262,10 @@ class ChatController extends Controller
     public function destroy(Request $request, $id)
     {
         $chat = $request->user()->chats()->findOrFail($id);
-        
+
         // For direct chats, just remove the user from the chat
         $chat->users()->detach($request->user()->id);
-        
+
         // If no users left, delete the chat
         if ($chat->users()->count() === 0) {
             $chat->delete();
@@ -275,7 +302,7 @@ class ChatController extends Controller
     public function markAsRead(Request $request, $id)
     {
         $chat = $request->user()->chats()->findOrFail($id);
-        
+
         // Update last_read_at in pivot
         $request->user()->chats()->updateExistingPivot($chat->id, [
             'last_read_at' => now(),

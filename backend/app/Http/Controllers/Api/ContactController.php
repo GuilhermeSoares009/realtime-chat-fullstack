@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * @OA\Schema(
@@ -53,21 +55,39 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 50);
-        
-        $contactIds = $request->user()
-            ->chats()
-            ->with('users')
-            ->get()
-            ->pluck('users')
-            ->flatten()
-            ->pluck('id')
-            ->unique()
-            ->reject(fn($id) => $id === $request->user()->id);
+        $page = $request->input('page', 1);
+        $userId = $request->user()->id;
 
-        $contacts = User::whereIn('id', $contactIds)
-            ->select('id', 'name', 'email', 'avatar', 'bio', 'is_online', 'last_seen_at')
-            ->orderBy('name')
-            ->paginate($perPage);
+        $cacheKey = "user:{$userId}:contacts:page:{$page}:per_page:{$perPage}";
+
+        $contacts = Cache::remember($cacheKey, 600, function () use ($request, $perPage, $userId) {
+            $contactIds = $request->user()
+                ->chats()
+                ->with('users')
+                ->get()
+                ->pluck('users')
+                ->flatten()
+                ->pluck('id')
+                ->unique()
+                ->reject(fn($id) => $id === $userId);
+
+            return User::whereIn('id', $contactIds)
+                ->select('id', 'name', 'email', 'avatar', 'bio', 'is_online', 'last_seen_at')
+                ->orderBy('name')
+                ->paginate($perPage);
+        });
+
+        $contacts->getCollection()->transform(function ($user) {
+            $onlineStatus = Redis::get("user:online:{$user->id}");
+            if ($onlineStatus) {
+                $status = json_decode($onlineStatus, true);
+                $user->is_online = true;
+                $user->last_seen_at = $status['last_seen'];
+            } else {
+                $user->is_online = false;
+            }
+            return $user;
+        });
 
         return response()->json($contacts);
     }
@@ -112,7 +132,7 @@ class ContactController extends Controller
         $users = User::where('id', '!=', $request->user()->id)
             ->where(function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%")
-                  ->orWhere('email', 'LIKE', "%{$query}%");
+                    ->orWhere('email', 'LIKE', "%{$query}%");
             })
             ->select('id', 'name', 'email', 'avatar', 'bio', 'is_online', 'last_seen_at')
             ->paginate($perPage);

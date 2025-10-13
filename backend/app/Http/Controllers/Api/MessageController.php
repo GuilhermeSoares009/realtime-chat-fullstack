@@ -11,6 +11,7 @@ use App\Jobs\ProcessMessageNotification;
 use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -145,6 +146,21 @@ class MessageController extends Controller
             'content' => 'required|string|max:5000',
         ]);
 
+        $userId = $request->user()->id;
+        $rateLimitKey = "rate_limit:user:{$userId}:messages";
+        $attempts = Redis::incr($rateLimitKey);
+
+        if ($attempts === 1) {
+            Redis::expire($rateLimitKey, 60);
+        }
+
+        if ($attempts > 30) {
+            Metrics::increment('messages.rate_limited');
+            return response()->json([
+                'message' => 'Too many messages. Please wait.'
+            ], 429);
+        }
+
         $message = DB::transaction(function () use ($chat, $validated, $request) {
             $message = $chat->messages()->create([
                 'user_id' => $request->user()->id,
@@ -160,6 +176,19 @@ class MessageController extends Controller
         });
 
         $message->load('user:id,name,avatar');
+
+        $chat->load('users');
+        foreach ($chat->users as $user) {
+            if ($user->id !== $request->user()->id) {
+                Redis::hincrby("user:{$user->id}:unread", $chatId, 1);
+            }
+        }
+
+        foreach ($chat->users as $user) {
+            Cache::tags(["user:{$user->id}:chats"])->flush();
+        }
+
+        Redis::del("chat:{$chatId}:typing:{$userId}");
 
         broadcast(new MessageSent($message))->toOthers();
 
@@ -350,7 +379,7 @@ class MessageController extends Controller
      * ),
      * @OA\Response(response=422, description="Validation error (e.g., missing search term)")
      * )
-     */  
+     */
     public function search(Request $request)
     {
         $query = $request->input('q', '');
@@ -405,7 +434,7 @@ class MessageController extends Controller
 
         $userId = $request->user()->id;
 
-        if($validated['is_typing']){
+        if ($validated['is_typing']) {
             Redis::setex(
                 "chat:{$chatId}:typing:{$userId}",
                 5,
